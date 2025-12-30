@@ -5,7 +5,6 @@ const { Server } = require("socket.io");
 const app = express();
 const server = http.createServer(app);
 
-// Socket.IO with proper CORS for any frontend
 const io = new Server(server, {
     cors: { origin: "*", methods: ["GET","POST"] }
 });
@@ -17,14 +16,19 @@ io.on("connection", (socket) => {
     console.log("Player connected:", socket.id);
     players[socket.id] = { x: 1, y: 1 };
 
-    // Handle movement
+    // Movement
     socket.on("move", (data) => {
         players[socket.id].x += data.x;
         players[socket.id].y += data.y;
         io.emit("updatePlayers", players);
     });
 
-    // Handle disconnect
+    // --- Chat system ---
+    socket.on("chatMessage", (msg) => {
+        io.emit("chatMessage", { id: socket.id, text: msg });
+    });
+
+    // Disconnect
     socket.on("disconnect", () => { delete players[socket.id]; });
 });
 
