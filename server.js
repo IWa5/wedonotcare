@@ -4,9 +4,7 @@ const { Server } = require("socket.io");
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server, {
-    cors: { origin: "*" }
-});
+const io = new Server(server, { cors: { origin: "*" } });
 
 let players = {};
 
@@ -20,9 +18,7 @@ io.on("connection", (socket) => {
         io.emit("updatePlayers", players);
     });
 
-    socket.on("disconnect", () => {
-        delete players[socket.id];
-    });
+    socket.on("disconnect", () => { delete players[socket.id]; });
 });
 
 const PORT = process.env.PORT || 3000;
